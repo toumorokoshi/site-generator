@@ -159,6 +159,15 @@ $ pip install --editable .
 $ aep-site-serve /path/to/aep/data/on/your/system
 ```
 
+### Using the docker container
+
+For quick serving, a docker container can also be used, wrapped in
+a convenience script `serve.sh`.
+
+```
+./serve.sh
+```
+
 [dataclasses]: https://docs.python.org/3/library/dataclasses.html
 [jekyll]: https://jekyllrb.com/
 [jinja2]: https://jinja.palletsprojects.com/en/2.11.x/
