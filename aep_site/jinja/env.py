@@ -22,7 +22,7 @@ from aep_site import md
 
 
 TEMPLATE_DIR = os.path.realpath(
-    os.path.join(os.path.dirname(__file__), '..', 'support', 'templates'),
+    os.path.join(os.path.dirname(__file__), "..", "support", "templates"),
 )
 
 
@@ -31,4 +31,4 @@ jinja_env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(searchpath=TEMPLATE_DIR),
     undefined=jinja2.StrictUndefined,
 )
-jinja_env.filters['markdown'] = lambda s: md.MarkdownDocument(s).html
+jinja_env.filters["markdown"] = lambda s: md.MarkdownDocument(s).html

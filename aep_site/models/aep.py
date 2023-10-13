@@ -51,8 +51,8 @@ class AEP:
         # TEMPORARY: In the interest of having two discrete migrations,
         # rewrite the old link style to the new one.
         answer = re.sub(
-            r'\.?\./0([\d]{1,3})\.md',
-            lambda m: f'{self.site.relative_uri}/{int(m.groups()[0]):d}',
+            r"\.?\./0([\d]{1,3})\.md",
+            lambda m: f"{self.site.relative_uri}/{int(m.groups()[0]):d}",
             answer,
         )
 
@@ -61,21 +61,21 @@ class AEP:
         # > 999, because the site redirects from 4221 to client-libraries/4221
         # now, for example.
         answer = re.sub(
-            r'\b(?<!\[)AEP-(\d+)\b',  # AEP-###, but not after a `[`.
-            fr'[AEP-\1]({self.site.relative_uri}/\1)',
+            r"\b(?<!\[)AEP-(\d+)\b",  # AEP-###, but not after a `[`.
+            rf"[AEP-\1]({self.site.relative_uri}/\1)",
             answer,
         )
         answer = re.sub(
-            r'(?<=\])\[aep-(\d+)\]',  # [aep-###], after a `]`.
-            fr'({self.site.relative_uri}/\1)',
+            r"(?<=\])\[aep-(\d+)\]",  # [aep-###], after a `]`.
+            rf"({self.site.relative_uri}/\1)",
             answer,
         )
 
         # Append the changelog if there is one.
         if self.changelog:
-            answer += '\n\n## Changelog\n\n'
+            answer += "\n\n## Changelog\n\n"
             for cl in sorted(self.changelog):
-                answer += f'- **{cl.date}:** {cl.message}\n'
+                answer += f"- **{cl.date}:** {cl.message}\n"
 
         # Return the document.
         return md.MarkdownDocument(answer)
@@ -94,29 +94,29 @@ class AEP:
     @property
     def placement(self) -> Placement:
         """Return the placement data for this AEP, or sensible defaults."""
-        p = self.config.get('placement', {})
-        p.setdefault('category', self.scope.code)
+        p = self.config.get("placement", {})
+        p.setdefault("category", self.scope.code)
         return Placement(**p)
 
     @property
     def redirects(self) -> typing.Set[str]:
-        uris = {f'/{self.id:04d}', f'/{self.id:03d}', f'/{self.id:02d}'}
+        uris = {f"/{self.id:04d}", f"/{self.id:03d}", f"/{self.id:02d}"}
         uris = uris.difference({self.relative_uri})
-        if 'redirect_from' in self.config:
-            uris.add(self.config['redirect_from'])
+        if "redirect_from" in self.config:
+            uris.add(self.config["redirect_from"])
         return uris
 
     @property
     def relative_uri(self) -> str:
         """Return the relative URI for this AEP."""
-        if self.scope.code != 'general':
-            return f'/{self.scope.code}/{self.id}'
-        return f'/{self.id}'
+        if self.scope.code != "general":
+            return f"/{self.scope.code}/{self.id}"
+        return f"/{self.id}"
 
     @property
     def repo_path(self) -> str:
         """Return the relative repository path."""
-        return self.path[len(self.site.base_dir):]
+        return self.path[len(self.site.base_dir) :]
 
     @property
     def site(self) -> Site:
@@ -129,20 +129,23 @@ class AEP:
         # Sanity check: Is this a legacy AEP (in the old Jekyll format)?
         # If so, process out a single template and return it.
         if self._legacy:
-            with io.open(self.path, 'r') as f:
+            with io.open(self.path, "r") as f:
                 contents = f.read()
-            _, body = contents.lstrip('-\n').split('---\n', maxsplit=1)
-            return {'generic': jinja2.Template(body,
-                undefined=jinja2.StrictUndefined,
-            )}
+            _, body = contents.lstrip("-\n").split("---\n", maxsplit=1)
+            return {
+                "generic": jinja2.Template(
+                    body,
+                    undefined=jinja2.StrictUndefined,
+                )
+            }
 
         # Return a dictionary with all of the templates.
         #
         # Note: This could be made more efficient in the future by only loading
         # the template that the user wants.
-        return collections.OrderedDict([
-            (k, self.env.get_template(k)) for k in self.env.list_templates()
-        ])
+        return collections.OrderedDict(
+            [(k, self.env.get_template(k)) for k in self.env.list_templates()]
+        )
 
     @cached_property
     def title(self) -> str:
@@ -162,11 +165,11 @@ class AEP:
     @property
     def _legacy(self) -> bool:
         """Return True if this is a legacy AEP, False otherwise."""
-        return self.path.endswith('.md')
+        return self.path.endswith(".md")
 
     def render(self):
         """Return the fully-rendered page for this AEP."""
-        return jinja_env.get_template('aep.html.j2').render(
+        return jinja_env.get_template("aep.html.j2").render(
             aep=self,
             path=self.relative_uri,
             site=self.site,
@@ -181,18 +184,18 @@ class Change:
     def __hash__(self):
         return hash(str(self))
 
-    def __lt__(self, other: 'Change'):
+    def __lt__(self, other: "Change"):
         # We sort changes in reverse-cron, so a later date is "less" here.
         return self.date > other.date
 
     def __str__(self):
-        return f'{self.date.isoformat()}: {self.message}'
+        return f"{self.date.isoformat()}: {self.message}"
 
 
 @dataclasses.dataclass(frozen=True)
 class Placement:
     category: str
-    order: typing.Union[int, float] = float('inf')
+    order: typing.Union[int, float] = float("inf")
 
 
 if typing.TYPE_CHECKING:

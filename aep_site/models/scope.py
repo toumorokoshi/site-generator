@@ -46,19 +46,19 @@ class Scope:
         # presence of file on disk.
         for fn in os.listdir(self.base_dir):
             path = os.path.join(self.base_dir, fn)
-            aep_config = os.path.join(path, 'aep.yaml')
+            aep_config = os.path.join(path, "aep.yaml")
             if os.path.isdir(path) and os.path.exists(aep_config):
-                with io.open(aep_config, 'r') as f:
+                with io.open(aep_config, "r") as f:
                     meta = yaml.safe_load(f)
 
             # Sanity check: Does this look like an old-style AEP?
-            elif path.endswith('.md'):
+            elif path.endswith(".md"):
                 # Load the AEP.
-                with io.open(path, 'r') as f:
+                with io.open(path, "r") as f:
                     contents = f.read()
 
                 # Parse out the front matter from the Markdown content.
-                fm, body = contents.lstrip('-\n').split('---\n', maxsplit=1)
+                fm, body = contents.lstrip("-\n").split("---\n", maxsplit=1)
                 meta = yaml.safe_load(fm)
 
             # This is not a recognized AEP.
@@ -67,15 +67,17 @@ class Scope:
                 continue
 
             # Create the AEP object.
-            answer.append(AEP(
-                id=meta.pop('id'),
-                config=meta,
-                changelog={Change(**i) for i in meta.pop('changelog', [])},
-                created=meta.pop('created'),
-                path=path,
-                scope=self,
-                state=meta.pop('state'),
-            ))
+            answer.append(
+                AEP(
+                    id=meta.pop("id"),
+                    config=meta,
+                    changelog={Change(**i) for i in meta.pop("changelog", [])},
+                    created=meta.pop("created"),
+                    path=path,
+                    scope=self,
+                    state=meta.pop("state"),
+                )
+            )
 
         answer = sorted(answer, key=lambda i: i.id)
         return collections.OrderedDict([(i.id, i) for i in answer])
@@ -87,29 +89,31 @@ class Scope:
         #
         # This is guaranteed to have all AEPs, so just return immediately
         # and skip remaining processing.
-        if not self.config.get('categories', None):
-            return {self.code: Category(
-                code=self.code,
-                title=self.title,
-                order=0,
-                aeps=self.aeps,
-            )}
+        if not self.config.get("categories", None):
+            return {
+                self.code: Category(
+                    code=self.code,
+                    title=self.title,
+                    order=0,
+                    aeps=self.aeps,
+                )
+            }
 
         # Iterate over each category and piece together the AEPs in order.
         cats = collections.OrderedDict()
-        for ix, cat in enumerate(self.config['categories']):
+        for ix, cat in enumerate(self.config["categories"]):
             # Determine what AEPs are in this category.
             aeps: typing.List[AEP] = []
             for aep in self.aeps.values():
-                if aep.placement.category != cat['code']:
+                if aep.placement.category != cat["code"]:
                     continue
                 aeps.append(aep)
             aeps = sorted(aeps, key=lambda i: i.placement.order)
 
             # Create the category object and add it.
-            cats[cat['code']] = Category(
-                code=cat['code'],
-                title=cat.get('title', cat['code'].capitalize()),
+            cats[cat["code"]] = Category(
+                code=cat["code"],
+                title=cat.get("title", cat["code"].capitalize()),
                 order=ix,
                 aeps=collections.OrderedDict([(i.id, i) for i in aeps]),
             )
@@ -117,11 +121,11 @@ class Scope:
 
     @property
     def relative_uri(self) -> str:
-        return f'/{self.code}'
+        return f"/{self.code}"
 
     def render(self):
         """Render the page for this scope."""
-        return jinja_env.get_template('aep-listing.html.j2').render(
+        return jinja_env.get_template("aep-listing.html.j2").render(
             path=self.relative_uri,
             scope=self,
             site=self.site,

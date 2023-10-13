@@ -14,8 +14,8 @@
 
 import re
 
-import markdown              # type: ignore
-import pymdownx.highlight    # type: ignore
+import markdown  # type: ignore
+import pymdownx.highlight  # type: ignore
 import pymdownx.superfences  # type: ignore
 
 from aep_site.utils import cached_property
@@ -24,14 +24,14 @@ from aep_site.utils import cached_property
 class MarkdownDocument(str):
     """A utility class representing Markdown content."""
 
-    def __init__(self, content: str, *, toc_title: str = 'Contents'):
+    def __init__(self, content: str, *, toc_title: str = "Contents"):
         self._content = content
         self._engine = markdown.Markdown(
-            extensions=[_superfences, 'tables', 'toc', 'pymdownx.tabbed'],
+            extensions=[_superfences, "tables", "toc", "pymdownx.tabbed"],
             extension_configs={
-                'toc': {
-                    'title': toc_title,
-                    'toc_depth': '2-3',
+                "toc": {
+                    "title": toc_title,
+                    "toc_depth": "2-3",
                 },
             },
             tab_length=2,
@@ -75,7 +75,7 @@ class MarkdownDocument(str):
     @cached_property
     def title(self) -> str:
         """Return the document title."""
-        return self._content.strip().splitlines()[0].strip('# \n')
+        return self._content.strip().splitlines()[0].strip("# \n")
 
     @property
     def toc(self) -> str:
@@ -92,7 +92,7 @@ class MarkdownDocument(str):
 
 def _add_block(content: str, toc_token, next_toc_token=None) -> str:
     # Determine the beginning of the block.
-    heading = '#' * toc_token['level'] + r'\s+' + toc_token['name']
+    heading = "#" * toc_token["level"] + r"\s+" + toc_token["name"]
     match = re.search(heading, content)
     if not match:
         return content
@@ -101,31 +101,37 @@ def _add_block(content: str, toc_token, next_toc_token=None) -> str:
     # Determine the end of the block.
     end_ix = len(content)
     if next_toc_token:
-        end_h = '#' * next_toc_token['level'] + r'\s+' + next_toc_token['name']
+        end_h = "#" * next_toc_token["level"] + r"\s+" + next_toc_token["name"]
         match = re.search(end_h, content)
         if not match:
             return content
         end_ix = match.span()[0]
-    elif '{% endblock %}' in content[start_ix:]:
+    elif "{% endblock %}" in content[start_ix:]:
         # We can match against an {% endblock %} safely because we are
         # processing "top-down" (e.g. <h2> before <h3>), then beginning-to-end;
         # this means that encountering an {% endblock %} is guaranteed to be
         # the endblock for the enclosing block.
-        end_ix = content.index('{% endblock %}', start_ix)
+        end_ix = content.index("{% endblock %}", start_ix)
 
     # Add the block for this heading.
     block = content[start_ix:end_ix]
-    block_id = toc_token['id'].replace('-', '_')
-    content = content.replace(block, '\n'.join((
-        f'{{% block {block_id} %}}',
+    block_id = toc_token["id"].replace("-", "_")
+    content = content.replace(
         block,
-        f'{{% endblock %}} {{# {block_id} #}}',
-    )), 1)
+        "\n".join(
+            (
+                f"{{% block {block_id} %}}",
+                block,
+                f"{{% endblock %}} {{# {block_id} #}}",
+            )
+        ),
+        1,
+    )
 
     # Iterate over any children to this toc_token and process them.
-    for ix, child in enumerate(toc_token['children']):
+    for ix, child in enumerate(toc_token["children"]):
         try:
-            next_child = toc_token['children'][ix + 1]
+            next_child = toc_token["children"][ix + 1]
         except IndexError:
             next_child = None
         content = _add_block(content, child, next_toc_token=next_child)
@@ -137,15 +143,17 @@ def _add_block(content: str, toc_token, next_toc_token=None) -> str:
 def _fmt(src: str, lang: str, css_class: str, *args, **kwargs):
     """Custom Markdown formatter that retains language classes."""
     highlighter = pymdownx.highlight.Highlight(guess_lang=False)
-    return highlighter.highlight(src, lang, f'{css_class} language-{lang}')
+    return highlighter.highlight(src, lang, f"{css_class} language-{lang}")
 
 
 # Define the superfences extension.
 # We need a custom fence to maintain useful language-specific CSS classes.
 _superfences = pymdownx.superfences.SuperFencesCodeExtension(
-    custom_fences=[{
-        'name': '*',
-        'class': 'highlight',
-        'format': _fmt,
-    }],
+    custom_fences=[
+        {
+            "name": "*",
+            "class": "highlight",
+            "format": _fmt,
+        }
+    ],
 )

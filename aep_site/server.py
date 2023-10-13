@@ -22,62 +22,60 @@ from aep_site.jinja.env import jinja_env
 from aep_site.models.site import Site
 
 
-ROOT = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
-app = flask.Flask('aep', static_folder=f'{ROOT}/aep_site/support/assets/')
+ROOT = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
+app = flask.Flask("aep", static_folder=f"{ROOT}/aep_site/support/assets/")
 app.jinja_env = jinja_env  # type: ignore
 
 
-@app.route('/')
+@app.route("/")
 def hello():
-    return flask.render_template('index.html.j2', site=flask.g.site)
+    return flask.render_template("index.html.j2", site=flask.g.site)
 
 
-@app.route('/<int:aep_id>')
+@app.route("/<int:aep_id>")
 def aep(aep_id: int):
     """Display a single AEP document."""
     return flask.g.site.aeps[aep_id].render()
 
 
-@app.route('/search')
+@app.route("/search")
 def search():
     """Display the search page."""
-    return flask.render_template('search.html.j2',
+    return flask.render_template(
+        "search.html.j2",
         site=flask.g.site,
         path=flask.request.path,
     )
 
 
-@app.route('/<page>')
-@app.route('/<collection>/<page>')
+@app.route("/<page>")
+@app.route("/<collection>/<page>")
 def page(page: str, collection: str = "general"):
     """Display a static page or listing of AEPs in a given scope."""
     site = flask.g.site
     if page in site.scopes:
         return site.scopes[page].render()
-    if (
-        collection in site.collections and
-        page in site.collections[collection].pages
-    ):
+    if collection in site.collections and page in site.collections[collection].pages:
         return site.collections[collection].pages[page].render()
     if collection in site.scopes and int(page) in site.scopes[collection].aeps:
         return site.scopes[collection].aeps[int(page)].render()
     flask.abort(404)
 
 
-@app.route('/assets/css/<path:css_file>')
+@app.route("/assets/css/<path:css_file>")
 def scss(css_file: str):
     """Compile the given SCSS file and return it."""
-    scss_file = re.sub(r'\.css$', '.scss', css_file)
-    css = compile_file(f'{ROOT}/aep_site/support/scss/{scss_file}')
-    return flask.Response(css, mimetype='text/css')
+    scss_file = re.sub(r"\.css$", ".scss", css_file)
+    css = compile_file(f"{ROOT}/aep_site/support/scss/{scss_file}")
+    return flask.Response(css, mimetype="text/css")
 
 
-@app.route('/assets/js/search/tipuesearch_content.js')
+@app.route("/assets/js/search/tipuesearch_content.js")
 def search_content():
     """Compile the search content JavaScript and return it."""
     return flask.Response(
-        flask.render_template('search.js.j2', site=flask.g.site),
-        mimetype='text/javascript',
+        flask.render_template("search.js.j2", site=flask.g.site),
+        mimetype="text/javascript",
     )
 
 
@@ -86,11 +84,13 @@ def site_load_func(src: str):
 
     This is used in cli.py to register to Flask.before_request.
     """
+
     def fx():
         flask.g.site = Site.load(src)
 
         # This is the dev server, so plow over whatever the configuration
         # says that the site URL is.
-        flask.g.site.config.setdefault('urls', {})
-        flask.g.site.config['urls']['site'] = 'http://localhost:4000'
+        flask.g.site.config.setdefault("urls", {})
+        flask.g.site.config["urls"]["site"] = "http://localhost:4000"
+
     return fx

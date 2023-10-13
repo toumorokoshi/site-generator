@@ -21,17 +21,21 @@ from aep_site.publisher import Publisher
 
 
 @click.command()
-@click.argument('src', type=click.Path(
-    allow_dash=False,
-    dir_okay=True,
-    exists=True,
-    file_okay=False,))
-@click.argument('dest', type=click.Path(
-    allow_dash=False,
-    dir_okay=True,
-    exists=False,
-    file_okay=False,
-    writable=True))
+@click.argument(
+    "src",
+    type=click.Path(
+        allow_dash=False,
+        dir_okay=True,
+        exists=True,
+        file_okay=False,
+    ),
+)
+@click.argument(
+    "dest",
+    type=click.Path(
+        allow_dash=False, dir_okay=True, exists=False, file_okay=False, writable=True
+    ),
+)
 def publish(src: str, dest: str):
     """Publish static HTML pages into the specified location."""
     publisher = Publisher(src, dest)
@@ -39,12 +43,11 @@ def publish(src: str, dest: str):
 
 
 @click.command()
-@click.argument('src', type=click.Path(
-    allow_dash=False,
-    dir_okay=True,
-    exists=True,
-    file_okay=False))
+@click.argument(
+    "src",
+    type=click.Path(allow_dash=False, dir_okay=True, exists=True, file_okay=False),
+)
 def serve(src: str):
     """Run a debug server."""
     server.app.before_request(server.site_load_func(src))
-    server.app.run(host='0.0.0.0', port=4000, debug=True)
+    server.app.run(host="0.0.0.0", port=4000, debug=True)

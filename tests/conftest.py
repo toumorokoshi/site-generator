@@ -21,5 +21,5 @@ from aep_site.models.site import Site
 
 @pytest.fixture
 def site():
-    root = os.path.realpath(f'{os.path.dirname(__file__)}/test_data')
+    root = os.path.realpath(f"{os.path.dirname(__file__)}/test_data")
     return Site.load(root)

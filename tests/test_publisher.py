@@ -19,5 +19,5 @@ from aep_site.publisher import Publisher
 
 def test_publisher():
     with tempfile.TemporaryDirectory() as tmp:
-        pub = Publisher('tests/test_data/', tmp)
+        pub = Publisher("tests/test_data/", tmp)
         pub.publish_site()
