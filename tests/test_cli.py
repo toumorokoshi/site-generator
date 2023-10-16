@@ -23,10 +23,10 @@ from aep_site.publisher import Publisher
 
 def test_publish():
     runner = CliRunner()
-    with mock.patch.object(Publisher, 'publish_site') as ps:
+    with mock.patch.object(Publisher, "publish_site") as ps:
         result = runner.invoke(
             cli.publish,
-            ['tests/test_data/', '/path/to/dest'],
+            ["tests/test_data/", "/path/to/dest"],
         )
         ps.assert_called_once_with()
     assert result.exit_code == 0
@@ -34,7 +34,7 @@ def test_publish():
 
 def test_serve():
     runner = CliRunner()
-    with mock.patch.object(flask.Flask, 'run') as run:
-        result = runner.invoke(cli.serve, ['tests/test_data/'])
-        run.assert_called_once_with(host='0.0.0.0', port=4000, debug=True)
+    with mock.patch.object(flask.Flask, "run") as run:
+        result = runner.invoke(cli.serve, ["tests/test_data/"])
+        run.assert_called_once_with(host="0.0.0.0", port=4000, debug=True)
     assert result.exit_code == 0

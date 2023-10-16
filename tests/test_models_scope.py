@@ -16,31 +16,31 @@ from aep_site.models.aep import AEP
 
 
 def test_aeps(site):
-    general = site.scopes['general']
-    poetry = site.scopes['poetry']
+    general = site.scopes["general"]
+    poetry = site.scopes["poetry"]
     assert all([i.id < 1000 for i in general.aeps.values()])
     assert all([i.id > 1000 for i in poetry.aeps.values()])
     assert all([isinstance(i, AEP) for i in general.aeps.values()])
 
 
 def test_categories(site):
-    general = site.scopes['general']
-    poetry = site.scopes['poetry']
+    general = site.scopes["general"]
+    poetry = site.scopes["poetry"]
     assert len(general.categories) == 2
-    assert 'hugo' in general.categories
-    assert 'dickens' in general.categories
+    assert "hugo" in general.categories
+    assert "dickens" in general.categories
     assert len(poetry.categories) == 1
-    assert 'poetry' in poetry.categories
+    assert "poetry" in poetry.categories
 
 
 def test_relative_uri(site):
     for scope in site.scopes.values():
-        assert scope.relative_uri == f'/{scope.code}'
+        assert scope.relative_uri == f"/{scope.code}"
 
 
 def test_render(site):
-    rendered = site.scopes['general'].render()
-    rendered_poetry = site.scopes['poetry'].render()
+    rendered = site.scopes["general"].render()
+    rendered_poetry = site.scopes["poetry"].render()
     assert '<h3 id="hugo">Victor Hugo</h3>' in rendered
     assert '<h3 id="dickens">Dickens</h3>' in rendered
     assert '<h3 id="poetry">Shakespearean Poetry</h3>' in rendered_poetry

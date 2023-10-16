@@ -17,11 +17,12 @@ import functools
 
 def cached_property(fx):
     """Mimic the @property decorator but cache the result."""
+
     @functools.wraps(fx)
     def inner(self):
         # Sanity check: If there is no cache at all, create an empty cache.
-        if not hasattr(self, '_cached_values'):
-            object.__setattr__(self, '_cached_values', {})
+        if not hasattr(self, "_cached_values"):
+            object.__setattr__(self, "_cached_values", {})
 
         # If and only if the function's result is not in the cache,
         # run the function.
@@ -30,4 +31,5 @@ def cached_property(fx):
 
         # Return the value from cache.
         return self._cached_values[fx.__name__]
+
     return property(inner)

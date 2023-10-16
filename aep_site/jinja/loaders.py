@@ -29,33 +29,33 @@ if typing.TYPE_CHECKING:
 class AEPLoader(jinja2.loaders.BaseLoader):
     """Loader for loading AEPs."""
 
-    def __init__(self, aep: 'AEP'):
+    def __init__(self, aep: "AEP"):
         super().__init__()
         self.aep = aep
 
     def get_source(self, env, template: str) -> typing.Tuple[str, str, None]:
         # Find the appropriate AEP file.
-        if template == 'generic':
-            fn = os.path.join(self.aep.path, 'aep.md')
+        if template == "generic":
+            fn = os.path.join(self.aep.path, "aep.md")
         else:
-            view = template.split('.')
+            view = template.split(".")
             while view:
-                view_str = '.'.join(view)
-                fn = os.path.join(self.aep.path, f'aep.{view_str}.md')
-                if os.path.isfile(fn) or os.path.isfile(f'{fn}.j2'):
+                view_str = ".".join(view)
+                fn = os.path.join(self.aep.path, f"aep.{view_str}.md")
+                if os.path.isfile(fn) or os.path.isfile(f"{fn}.j2"):
                     break
                 view = view[1:]
 
         # Sanity check: Does the file exist?
         # If not, raise an error.
-        if not os.path.isfile(fn) and not os.path.isfile(f'{fn}.j2'):
+        if not os.path.isfile(fn) and not os.path.isfile(f"{fn}.j2"):
             raise jinja2.TemplateNotFound(
-                f'Could not find {template} template for AEP-{self.aep.id}.',
+                f"Could not find {template} template for AEP-{self.aep.id}.",
             )
 
         # Are we loading a plain file or a Jinja2 template file?
-        if os.path.isfile(f'{fn}.j2'):
-            fn += '.j2'
+        if os.path.isfile(f"{fn}.j2"):
+            fn += ".j2"
 
         # Load the contents.
         with io.open(fn) as f:
@@ -66,7 +66,7 @@ class AEPLoader(jinja2.loaders.BaseLoader):
         # Note: We only do this if the template does not already have
         # {% block %} tags to avoid either stomping over input, or creating
         # an invalid template.
-        if not re.search(r'\{%-? block', contents):
+        if not re.search(r"\{%-? block", contents):
             # Iterate over the individual components in the table
             # of contents and make each into a block.
             contents = MarkdownDocument(contents).blocked_content
@@ -79,17 +79,18 @@ class AEPLoader(jinja2.loaders.BaseLoader):
 
         # We sort the files in the directory to read more specific
         # files first.
-        exts_regex = r'(\.(j2|md|proto|oas|yaml))*$'
-        for fn in sorted(os.listdir(self.aep.path),
-                key=lambda p: len(re.sub(exts_regex, '', p).split('.')),
-                reverse=True):
-
+        exts_regex = r"(\.(j2|md|proto|oas|yaml))*$"
+        for fn in sorted(
+            os.listdir(self.aep.path),
+            key=lambda p: len(re.sub(exts_regex, "", p).split(".")),
+            reverse=True,
+        ):
             # Each file may specify a view, which corresponds to a separate
             # template.
-            view = '.'.join(re.sub(exts_regex, '', fn).split('.')[1:])
+            view = ".".join(re.sub(exts_regex, "", fn).split(".")[1:])
             if view and view not in answer:
                 answer.append(view)
 
         # There is always a generic view.
-        answer.append('generic')
+        answer.append("generic")
         return answer

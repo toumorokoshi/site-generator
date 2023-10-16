@@ -30,7 +30,7 @@ from aep_site.models.page import Page
 
 
 SUPPORT_ROOT = os.path.realpath(
-    os.path.join(os.path.dirname(__file__), 'support'),
+    os.path.join(os.path.dirname(__file__), "support"),
 )
 
 
@@ -43,7 +43,7 @@ class Publisher:
 
     def log(self, message: str, *, err: bool = False):
         """Conditionally log a message."""
-        click.secho(f'{message}', nl=True, err=err)
+        click.secho(f"{message}", nl=True, err=err)
 
     def publish_site(self):
         """Publish the full site."""
@@ -56,73 +56,77 @@ class Publisher:
             self.publish_doc(aep)
 
         # Publish support pages that are not Markdown pages.
-        self.publish_template('index.html.j2', 'index.html')
-        self.publish_template('search.html.j2', 'search.html')
+        self.publish_template("index.html.j2", "index.html")
+        self.publish_template("search.html.j2", "search.html")
 
         # Copy over assets files verbatim.
         self.publish_assets()
 
         # Publish dynamic content that goes in the assets directory.
         self.publish_template(
-            'search.js.j2',
-            'assets/js/search/tipuesearch_content.js',
+            "search.js.j2",
+            "assets/js/search/tipuesearch_content.js",
         )
         self.publish_css()
 
     def publish_doc(self, doc: typing.Union[AEP, Scope, Page]):
         """Publish a single AEP document to disk."""
         # Determine the path and make sure the directory exists.
-        path = f'{self.output_dir}{doc.relative_uri}.html'
+        path = f"{self.output_dir}{doc.relative_uri}.html"
         os.makedirs(os.path.dirname(path), exist_ok=True)
 
         # Write the document's file to disk.
-        with io.open(path, 'w') as f:
+        with io.open(path, "w") as f:
             f.write(doc.render())
-        self.log(f'Successfully wrote {path}.')
+        self.log(f"Successfully wrote {path}.")
 
         # If this document has any redirects (only AEPs do as of this writing),
         # write out the redirect files to disk also.
-        for redirect in getattr(doc, 'redirects', set()):
-            rpath = f'{self.output_dir}{redirect}.html'
-            with io.open(rpath, 'w') as f:
-                f.write(jinja_env.get_template('redirect.html.j2').render(
-                    site=self.site,
-                    target=doc,
-                ))
-            self.log(f'Successfully wrote {rpath} (redirect).')
+        for redirect in getattr(doc, "redirects", set()):
+            rpath = f"{self.output_dir}{redirect}.html"
+            with io.open(rpath, "w") as f:
+                f.write(
+                    jinja_env.get_template("redirect.html.j2").render(
+                        site=self.site,
+                        target=doc,
+                    )
+                )
+            self.log(f"Successfully wrote {rpath} (redirect).")
 
     def publish_template(self, tmpl: str, path: str):
         """Publish a site-wide template to a particular path."""
-        path = f'{self.output_dir}{os.path.sep}{path}'
+        path = f"{self.output_dir}{os.path.sep}{path}"
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        with io.open(path, 'w') as f:
-            f.write(jinja_env.get_template(tmpl).render(
-                site=self.site,
-                path=path.split('.')[0],
-            ))
-        self.log(f'Successfully wrote {path}.')
+        with io.open(path, "w") as f:
+            f.write(
+                jinja_env.get_template(tmpl).render(
+                    site=self.site,
+                    path=path.split(".")[0],
+                )
+            )
+        self.log(f"Successfully wrote {path}.")
 
     def publish_assets(self):
         """Copy the assets directory."""
         shutil.copytree(
-            src=os.path.join(SUPPORT_ROOT, 'assets'),
-            dst=os.path.join(self.output_dir, 'assets'),
+            src=os.path.join(SUPPORT_ROOT, "assets"),
+            dst=os.path.join(self.output_dir, "assets"),
             dirs_exist_ok=True,
         )
-        self.log('Successfully wrote asset files.')
+        self.log("Successfully wrote asset files.")
 
     def publish_css(self):
         """Compile and publish all SCSS files in the root SCSS directory."""
-        scss_path = os.path.join(SUPPORT_ROOT, 'scss')
-        css_path = os.path.join(self.output_dir, 'assets', 'css')
+        scss_path = os.path.join(SUPPORT_ROOT, "scss")
+        css_path = os.path.join(self.output_dir, "assets", "css")
         os.makedirs(css_path, exist_ok=True)
         for scss_file in os.listdir(scss_path):
-            if not scss_file.endswith('.scss'):
+            if not scss_file.endswith(".scss"):
                 continue
             css_file = os.path.join(
                 css_path,
-                re.sub(r'\.scss$', '.css', scss_file),
+                re.sub(r"\.scss$", ".css", scss_file),
             )
-            with io.open(css_file, 'w') as f:
+            with io.open(css_file, "w") as f:
                 f.write(compile_file(os.path.join(scss_path, scss_file)))
-            self.log(f'Successfully wrote {css_file}.')
+            self.log(f"Successfully wrote {css_file}.")

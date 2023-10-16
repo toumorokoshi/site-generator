@@ -2,7 +2,7 @@
 name: test
 on:
   pull_request:
-    branches: master
+    branches: ["main"]
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -29,10 +29,14 @@ jobs:
     container: python:3.10
     steps:
       - uses: actions/checkout@v3
-      - name: Install the linter (flake8).
-        run: pip install flake8
-      - name: Run the linter.
+      # versions of linters should be hard-pinned
+      # to ensure no random breakages to styling.
+      - name: Install linters.
+        run: pip install flake8==6.1.0 black==23.9.1
+      - name: Run flake8
         run: flake8 aep_site/ tests/
+      - name: Run .black
+        run: black . --check
   mypy:
     runs-on: ubuntu-latest
     container: python:3.10

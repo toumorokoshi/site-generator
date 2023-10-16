@@ -23,24 +23,29 @@ from aep_site.jinja import loaders
 
 
 def test_valid_sample(site):
-    with mock.patch.object(loaders, 'AEPLoader', TestLoader):
+    with mock.patch.object(loaders, "AEPLoader", TestLoader):
         les_mis = site.aeps[62]
-        les_mis.env.loader.set_template_body(r"""
+        les_mis.env.loader.set_template_body(
+            r"""
             {% sample 'les_mis.proto', 'message Book' %}
-        """)
-        rendered = les_mis.env.get_template('test').render(aep=les_mis)
-        assert '```proto\n' in rendered
-        assert 'message Book {' in rendered
-        assert 'string name = 1;' in rendered
+        """
+        )
+        rendered = les_mis.env.get_template("test").render(aep=les_mis)
+        assert "```proto\n" in rendered
+        assert "message Book {" in rendered
+        assert "string name = 1;" in rendered
 
 
 def test_valid_sample_nested_braces(site):
-    with mock.patch.object(loaders, 'AEPLoader', TestLoader):
+    with mock.patch.object(loaders, "AEPLoader", TestLoader):
         les_mis = site.aeps[62]
-        les_mis.env.loader.set_template_body(r"""
+        les_mis.env.loader.set_template_body(
+            r"""
             {% sample 'les_mis.proto', 'message Book' %}
-        """)
-    content = textwrap.dedent("""
+        """
+        )
+    content = textwrap.dedent(
+        """
         // A representation for a book.
         message Book {
             string name = 1;
@@ -54,51 +59,59 @@ def test_valid_sample_nested_braces(site):
         message Other {
             string whatever = 1;
         }
-    """.lstrip())
-    with mock.patch.object(io, 'open', mock.mock_open(read_data=content)):
-        rendered = les_mis.env.get_template('test').render(aep=les_mis)
-    assert '```proto\n' in rendered
-    assert '// A representation for a book.\n' in rendered
-    assert 'message Book {\n' in rendered
-    assert '    string name = 1;\n' in rendered
-    assert '    enum Type {\n' in rendered
-    assert '        TYPE_UNSPECIFIED = 0;\n' in rendered
-    assert '    Type type = 2;\n' in rendered
-    assert 'message Other' not in rendered
-    assert 'string whatever' not in rendered
+    """.lstrip()
+    )
+    with mock.patch.object(io, "open", mock.mock_open(read_data=content)):
+        rendered = les_mis.env.get_template("test").render(aep=les_mis)
+    assert "```proto\n" in rendered
+    assert "// A representation for a book.\n" in rendered
+    assert "message Book {\n" in rendered
+    assert "    string name = 1;\n" in rendered
+    assert "    enum Type {\n" in rendered
+    assert "        TYPE_UNSPECIFIED = 0;\n" in rendered
+    assert "    Type type = 2;\n" in rendered
+    assert "message Other" not in rendered
+    assert "string whatever" not in rendered
 
 
 def test_valid_sample_semi(site):
-    with mock.patch.object(loaders, 'AEPLoader', TestLoader):
+    with mock.patch.object(loaders, "AEPLoader", TestLoader):
         les_mis = site.aeps[62]
-        les_mis.env.loader.set_template_body(r"""
+        les_mis.env.loader.set_template_body(
+            r"""
             {% sample 'les_mis.proto', 'string name' %}
-        """)
-    content = textwrap.dedent("""
+        """
+        )
+    content = textwrap.dedent(
+        """
         // A representation of a book.
         message Book {
             // The name of the book.
             // Format: publishers/{publisher}/books/{book}
             string name = 1;
         }
-    """)
-    with mock.patch.object(io, 'open', mock.mock_open(read_data=content)):
-        rendered = les_mis.env.get_template('test').render(aep=les_mis)
-    assert '```proto\n' in rendered
-    assert '// The name of the book.' in rendered
-    assert 'string name = 1;\n' in rendered
-    assert '  string name = 1;\n' not in rendered
-    assert '// A representation of a book.\n' not in rendered
-    assert 'message Book {\n' not in rendered
+    """
+    )
+    with mock.patch.object(io, "open", mock.mock_open(read_data=content)):
+        rendered = les_mis.env.get_template("test").render(aep=les_mis)
+    assert "```proto\n" in rendered
+    assert "// The name of the book." in rendered
+    assert "string name = 1;\n" in rendered
+    assert "  string name = 1;\n" not in rendered
+    assert "// A representation of a book.\n" not in rendered
+    assert "message Book {\n" not in rendered
 
 
 def test_valid_sample_yaml(site):
-    with mock.patch.object(loaders, 'AEPLoader', TestLoader):
+    with mock.patch.object(loaders, "AEPLoader", TestLoader):
         les_mis = site.aeps[62]
-        les_mis.env.loader.set_template_body(r"""
+        les_mis.env.loader.set_template_body(
+            r"""
             {% sample 'les_mis.oas.yaml', 'paths' %}
-        """)
-    content = textwrap.dedent("""
+        """
+        )
+    content = textwrap.dedent(
+        """
         ---
         schemas:
             meh: meh
@@ -107,25 +120,29 @@ def test_valid_sample_yaml(site):
             foo: bar
             baz: bacon
         something_else: false
-    """)
-    with mock.patch.object(io, 'open', mock.mock_open(read_data=content)):
-        rendered = les_mis.env.get_template('test').render(aep=les_mis)
-    assert '```yaml\n' in rendered
-    assert '# The paths.\n' in rendered
-    assert 'paths:\n' in rendered
-    assert '    foo: bar\n' in rendered
-    assert '    baz: bacon\n' in rendered
-    assert 'schemas:' not in rendered
-    assert 'something_else:' not in rendered
+    """
+    )
+    with mock.patch.object(io, "open", mock.mock_open(read_data=content)):
+        rendered = les_mis.env.get_template("test").render(aep=les_mis)
+    assert "```yaml\n" in rendered
+    assert "# The paths.\n" in rendered
+    assert "paths:\n" in rendered
+    assert "    foo: bar\n" in rendered
+    assert "    baz: bacon\n" in rendered
+    assert "schemas:" not in rendered
+    assert "something_else:" not in rendered
 
 
 def test_valid_sample_yaml_indented(site):
-    with mock.patch.object(loaders, 'AEPLoader', TestLoader):
+    with mock.patch.object(loaders, "AEPLoader", TestLoader):
         les_mis = site.aeps[62]
-        les_mis.env.loader.set_template_body(r"""
+        les_mis.env.loader.set_template_body(
+            r"""
             {% sample 'les_mis.oas.yaml', 'paths' %}
-        """)
-    content = textwrap.dedent("""
+        """
+        )
+    content = textwrap.dedent(
+        """
         ---
         schemas:
             meh: meh
@@ -134,113 +151,130 @@ def test_valid_sample_yaml_indented(site):
                 foo: bar
                 baz: bacon
         something_else: false
-    """)
-    with mock.patch.object(io, 'open', mock.mock_open(read_data=content)):
-        rendered = les_mis.env.get_template('test').render(aep=les_mis)
-    assert '```yaml\n' in rendered
-    assert '# The paths.\n' in rendered
-    assert 'paths:\n' in rendered
-    assert '    foo: bar\n' in rendered
-    assert '    baz: bacon\n' in rendered
-    assert 'schemas:' not in rendered
-    assert 'something_else:' not in rendered
+    """
+    )
+    with mock.patch.object(io, "open", mock.mock_open(read_data=content)):
+        rendered = les_mis.env.get_template("test").render(aep=les_mis)
+    assert "```yaml\n" in rendered
+    assert "# The paths.\n" in rendered
+    assert "paths:\n" in rendered
+    assert "    foo: bar\n" in rendered
+    assert "    baz: bacon\n" in rendered
+    assert "schemas:" not in rendered
+    assert "something_else:" not in rendered
 
 
 def test_valid_sample_yaml_with_braces(site):
-    with mock.patch.object(loaders, 'AEPLoader', TestLoader):
+    with mock.patch.object(loaders, "AEPLoader", TestLoader):
         les_mis = site.aeps[62]
-        les_mis.env.loader.set_template_body(r"""
+        les_mis.env.loader.set_template_body(
+            r"""
             {% sample 'les_mis.oas.yaml', '/v1/publishers/{publisherId}' %}
-        """)
-    content = textwrap.dedent("""
+        """
+        )
+    content = textwrap.dedent(
+        """
         ---
         paths:
             /v1/publishers/{publisherId}:
                 baz: bacon
         something_else: false
-    """).strip('\n')
-    with mock.patch.object(io, 'open', mock.mock_open(read_data=content)):
-        rendered = les_mis.env.get_template('test').render(aep=les_mis)
-    assert '```yaml\n' in rendered
-    assert 'paths:\n' not in rendered
-    assert '/v1/publishers/{publisherId}:\n' in rendered
-    assert '    baz: bacon\n' in rendered
-    assert 'something_else:' not in rendered
+    """
+    ).strip("\n")
+    with mock.patch.object(io, "open", mock.mock_open(read_data=content)):
+        rendered = les_mis.env.get_template("test").render(aep=les_mis)
+    assert "```yaml\n" in rendered
+    assert "paths:\n" not in rendered
+    assert "/v1/publishers/{publisherId}:\n" in rendered
+    assert "    baz: bacon\n" in rendered
+    assert "something_else:" not in rendered
 
 
 def test_valid_sample_yaml_to_eof(site):
-    with mock.patch.object(loaders, 'AEPLoader', TestLoader):
+    with mock.patch.object(loaders, "AEPLoader", TestLoader):
         les_mis = site.aeps[62]
-        les_mis.env.loader.set_template_body(r"""
+        les_mis.env.loader.set_template_body(
+            r"""
             {% sample 'les_mis.oas.yaml', 'paths' %}
-        """)
-    content = textwrap.dedent("""
+        """
+        )
+    content = textwrap.dedent(
+        """
         ---
         paths:
             foo: bar
             baz: bacon
         schemas:
             meh: meh
-    """)
-    with mock.patch.object(io, 'open', mock.mock_open(read_data=content)):
-        rendered = les_mis.env.get_template('test').render(aep=les_mis)
-    assert '```yaml\n' in rendered
-    assert 'paths:\n' in rendered
-    assert '    foo: bar\n' in rendered
-    assert '    baz: bacon\n' in rendered
-    assert 'schemas:' not in rendered
+    """
+    )
+    with mock.patch.object(io, "open", mock.mock_open(read_data=content)):
+        rendered = les_mis.env.get_template("test").render(aep=les_mis)
+    assert "```yaml\n" in rendered
+    assert "paths:\n" in rendered
+    assert "    foo: bar\n" in rendered
+    assert "    baz: bacon\n" in rendered
+    assert "schemas:" not in rendered
 
 
 def test_invalid_sample_file_not_found(site):
-    with mock.patch.object(loaders, 'AEPLoader', TestLoader):
+    with mock.patch.object(loaders, "AEPLoader", TestLoader):
         les_mis = site.aeps[62]
-        les_mis.env.loader.set_template_body(r"""
+        les_mis.env.loader.set_template_body(
+            r"""
             {% sample 'bogus.proto', 'message Book' %}
-        """)
+        """
+        )
     with pytest.raises(jinja2.TemplateSyntaxError) as ex:
-        les_mis.env.get_template('test').render(aep=les_mis)
-    assert ex.value.message.startswith('File not found: ')
-    assert ex.value.message.endswith('bogus.proto')
+        les_mis.env.get_template("test").render(aep=les_mis)
+    assert ex.value.message.startswith("File not found: ")
+    assert ex.value.message.endswith("bogus.proto")
 
 
 def test_invalid_sample_symbol_not_found(site):
-    with mock.patch.object(loaders, 'AEPLoader', TestLoader):
+    with mock.patch.object(loaders, "AEPLoader", TestLoader):
         les_mis = site.aeps[62]
-        les_mis.env.loader.set_template_body(r"""
+        les_mis.env.loader.set_template_body(
+            r"""
             {% sample 'les_mis.proto', 'message Movie' %}
-        """)
+        """
+        )
     with pytest.raises(jinja2.TemplateSyntaxError) as ex:
-        les_mis.env.get_template('test').render(aep=les_mis)
-    assert ex.value.message.startswith('Symbol not found: ')
-    assert ex.value.message.endswith('message Movie')
+        les_mis.env.get_template("test").render(aep=les_mis)
+    assert ex.value.message.startswith("Symbol not found: ")
+    assert ex.value.message.endswith("message Movie")
 
 
 def test_invalid_sample_no_open_brace(site):
-    with mock.patch.object(loaders, 'AEPLoader', TestLoader):
+    with mock.patch.object(loaders, "AEPLoader", TestLoader):
         les_mis = site.aeps[62]
-        les_mis.env.loader.set_template_body(r"""
+        les_mis.env.loader.set_template_body(
+            r"""
             {% sample 'les_mis.proto', 'message Book' %}
-        """)
+        """
+        )
     with pytest.raises(jinja2.TemplateSyntaxError) as ex:
-        content = 'message Book\n'
-        with mock.patch.object(io, 'open', mock.mock_open(read_data=content)):
-            les_mis.env.get_template('test').render(aep=les_mis)
-    assert ex.value.message.startswith('No block character')
-    assert ex.value.message.endswith('message Book')
+        content = "message Book\n"
+        with mock.patch.object(io, "open", mock.mock_open(read_data=content)):
+            les_mis.env.get_template("test").render(aep=les_mis)
+    assert ex.value.message.startswith("No block character")
+    assert ex.value.message.endswith("message Book")
 
 
 def test_invalid_sample_no_close_brace(site):
-    with mock.patch.object(loaders, 'AEPLoader', TestLoader):
+    with mock.patch.object(loaders, "AEPLoader", TestLoader):
         les_mis = site.aeps[62]
-        les_mis.env.loader.set_template_body(r"""
+        les_mis.env.loader.set_template_body(
+            r"""
             {% sample 'les_mis.proto', 'message Book' %}
-        """)
+        """
+        )
     with pytest.raises(jinja2.TemplateSyntaxError) as ex:
-        content = 'message Book {\n'
-        with mock.patch.object(io, 'open', mock.mock_open(read_data=content)):
-            les_mis.env.get_template('test').render(aep=les_mis)
-    assert ex.value.message.startswith('No corresponding }')
-    assert ex.value.message.endswith('message Book.')
+        content = "message Book {\n"
+        with mock.patch.object(io, "open", mock.mock_open(read_data=content)):
+            les_mis.env.get_template("test").render(aep=les_mis)
+    assert ex.value.message.startswith("No corresponding }")
+    assert ex.value.message.endswith("message Book.")
 
 
 class TestLoader(loaders.AEPLoader):
@@ -250,9 +284,9 @@ class TestLoader(loaders.AEPLoader):
         self._body = textwrap.dedent(text)
 
     def list_templates(self):
-        return super().list_templates() + ['test']
+        return super().list_templates() + ["test"]
 
     def get_source(self, env, template):
-        if template == 'test':
-            return self._body, 'test.md.j2', None
+        if template == "test":
+            return self._body, "test.md.j2", None
         return super().get_source(env, template)

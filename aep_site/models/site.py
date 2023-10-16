@@ -39,9 +39,9 @@ class Site:
     def load(cls, base_dir: str) -> Site:
         # Load all site configuration.
         config: typing.Dict[str, typing.Any] = {}
-        config_dir = os.path.join(base_dir, 'config')
+        config_dir = os.path.join(base_dir, "config")
         for fn in os.listdir(config_dir):
-            with io.open(os.path.join(config_dir, fn), 'r') as f:
+            with io.open(os.path.join(config_dir, fn), "r") as f:
                 config[fn[:-5]] = yaml.safe_load(f)
 
         # Return a new Site object.
@@ -63,12 +63,12 @@ class Site:
     @property
     def base_url(self) -> str:
         """Return the site's base URL."""
-        return self.config.get('urls', {}).get('site', '').rstrip('/')
+        return self.config.get("urls", {}).get("site", "").rstrip("/")
 
     @cached_property
     def collections(self) -> typing.Dict[str, Collection]:
         """Return all of the page collections in the site."""
-        pages_dir = os.path.join(self.base_dir, 'pages')
+        pages_dir = os.path.join(self.base_dir, "pages")
         answer = {}
         for dirname in os.listdir(pages_dir):
             # Sanity check: Is this a directory?
@@ -85,42 +85,42 @@ class Site:
             for page in col.pages.values():
                 # Disambiguate the pages from one another, but treat the
                 # general collection as special and remove the prefix.
-                code = f'{col.code}/{page.code}'.replace('general/', '')
+                code = f"{col.code}/{page.code}".replace("general/", "")
                 answer[code] = page
         return answer
 
     @property
     def relative_uri(self) -> str:
-        return '/{}'.format('/'.join(self.base_url.split('/')[3:])).rstrip('/')
+        return "/{}".format("/".join(self.base_url.split("/")[3:])).rstrip("/")
 
     @property
     def repo_url(self) -> str:
-        return self.config.get('urls', {}).get('repo', '').rstrip('/')
+        return self.config.get("urls", {}).get("repo", "").rstrip("/")
 
     @cached_property
     def scopes(self) -> typing.Dict[str, Scope]:
         """Return all of the AEP scopes present in the site."""
         answer_list = []
-        aep_dir = os.path.join(self.base_dir, 'aep')
+        aep_dir = os.path.join(self.base_dir, "aep")
         for fn in os.listdir(aep_dir):
             # If there is a scope.yaml file, then this is a scope directory
             # and we add it to our list.
-            scope_file = os.path.join(aep_dir, fn, 'scope.yaml')
+            scope_file = os.path.join(aep_dir, fn, "scope.yaml")
             if not os.path.exists(scope_file):
                 continue
 
             # Open the scope's configuration file and create a Scope
             # object based on it.
-            with io.open(scope_file, 'r') as f:
+            with io.open(scope_file, "r") as f:
                 conf = yaml.safe_load(f)
-            code = conf.pop('code', fn)
+            code = conf.pop("code", fn)
             scope = Scope(
                 base_dir=os.path.join(aep_dir, fn),
                 code=code,
                 config=conf,
-                order=conf.pop('order', float('inf')),
+                order=conf.pop("order", float("inf")),
                 site=self,
-                title=conf.pop('title', code.capitalize()),
+                title=conf.pop("title", code.capitalize()),
             )
 
             # Append the scope to our list.

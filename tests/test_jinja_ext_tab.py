@@ -20,26 +20,36 @@ from aep_site.jinja.ext.tab import TabExtension
 
 
 def test_tab():
-    t = jinja2.Template(textwrap.dedent("""
+    t = jinja2.Template(
+        textwrap.dedent(
+            """
         {% tab proto %}
         Something something
         More more more
         {% endtabs %}
-    """), extensions=[TabExtension])
+    """
+        ),
+        extensions=[TabExtension],
+    )
     rendered = t.render()
     assert '=== "Protocol buffers"' in rendered
-    assert '  Something something\n' in rendered
-    assert '  More more more\n' in rendered
+    assert "  Something something\n" in rendered
+    assert "  More more more\n" in rendered
 
 
 def test_multiple_tabs():
-    t = jinja2.Template(textwrap.dedent("""
+    t = jinja2.Template(
+        textwrap.dedent(
+            """
         {% tab proto %}
         Something something
         {% tab oas %}
         Something else
         {% endtabs %}
-    """), extensions=[TabExtension])
+    """
+        ),
+        extensions=[TabExtension],
+    )
     rendered = t.render()
     assert '=== "Protocol buffers"' in rendered
     assert '=== "OpenAPI 3.0"' in rendered
