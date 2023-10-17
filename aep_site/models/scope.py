@@ -67,6 +67,7 @@ class Scope:
                 continue
 
             # Create the AEP object.
+            state = meta.pop("state") if "state" in meta else None
             answer.append(
                 AEP(
                     id=meta.pop("id"),
@@ -75,7 +76,7 @@ class Scope:
                     created=meta.pop("created"),
                     path=path,
                     scope=self,
-                    state=meta.pop("state"),
+                    state=state,
                 )
             )
 

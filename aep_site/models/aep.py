@@ -33,7 +33,7 @@ from aep_site.utils import cached_property
 @dataclasses.dataclass(frozen=True)
 class AEP:
     id: int
-    state: str
+    state: typing.Optional[str]
     created: datetime.date
     scope: Scope
     path: str

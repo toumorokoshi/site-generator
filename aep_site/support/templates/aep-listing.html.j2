@@ -45,12 +45,12 @@
     </thead>
     <tbody>
     {% for aep in cat.aeps.values() -%}
-      {% if aep.state in ('approved', 'reviewing', 'draft') -%}
+      {% if aep.state in ('approved', 'reviewing', 'draft', None) -%}
       <tr>
         <td style="text-align: right;">{{ aep.id }}</td>
         <td>
           <a href="{{ site.relative_uri }}/{{ aep.id }}">{{ aep.title }}</a>
-          {% if aep.state != 'approved' -%}
+          {% if aep.state not in ('approved', None) -%}
           <span class="aep-state aep-state-{{ aep.state }}">
             {{ aep.state | capitalize }}
           </span>
