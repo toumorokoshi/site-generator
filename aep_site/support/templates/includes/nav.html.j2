@@ -13,13 +13,16 @@
 
     {# Individual AEPs in this scope. -#}
     <li class="nav-item nav-item-header">AEPs</li>
-    {% for aep in site.scopes[scope_code].aeps.values() -%}
-    <li class="nav-item{% if path.split('/')[-1] == '{:d}'.format(aep.id) %} nav-item-active{% endif %}">
-      <a href="{{ site.relative_uri }}/{{ aep.id }}">
-        <span class="aep-number">{{ aep.id }}</span>
-        {{ aep.title }}
-      </a>
-    </li>
+    {% for cat in site.scopes[scope_code].categories.values() -%}
+      <li class="nav-item">{{ cat.title }}</li>
+      {% for aep in cat.aeps.values() -%}
+        <li class="nav-item{% if path.split('/')[-1] == '{:d}'.format(aep.id) %} nav-item-active{% endif %}">
+          <a href="{{ site.relative_uri }}/{{ aep.id }}">
+            <span class="aep-number">{{ aep.id }}</span>
+            {{ aep.title }}
+          </a>
+        </li>
+      {% endfor -%}
     {% endfor -%}
   </ul>
 </nav>

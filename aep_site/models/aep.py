@@ -36,6 +36,7 @@ class AEP:
     state: str
     created: datetime.date
     scope: Scope
+    slug: str
     path: str
     config: typing.Dict[str, typing.Any]
     changelog: typing.Set[Change] = dataclasses.field(default_factory=set)
@@ -100,7 +101,12 @@ class AEP:
 
     @property
     def redirects(self) -> typing.Set[str]:
-        uris = {f"/{self.id:04d}", f"/{self.id:03d}", f"/{self.id:02d}"}
+        uris = {
+            f"/{self.id:04d}",
+            f"/{self.id:03d}",
+            f"/{self.id:02d}",
+            f"/{self.slug}",
+        }
         uris = uris.difference({self.relative_uri})
         if "redirect_from" in self.config:
             uris.add(self.config["redirect_from"])

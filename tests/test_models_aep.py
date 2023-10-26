@@ -56,9 +56,9 @@ def test_placement(site):
 
 
 def test_redirects(site):
-    assert site.aeps[43].redirects == {"/0043", "/043"}
-    assert site.aeps[59].redirects == {"/0059", "/059", "/two-cities"}
-    assert site.aeps[1622].redirects == {"/1622"}
+    assert site.aeps[43].redirects == {"/0043", "/043", "/a-christmas-carol"}
+    assert site.aeps[59].redirects == {"/0059", "/059", "/two-cities-2", "/two-cities"}
+    assert site.aeps[1622].redirects == {"/1622", "/orpheus"}
 
 
 def test_relative_uri(site):

@@ -60,6 +60,15 @@ class Site:
                 answer[id] = aep
         return answer
 
+    @cached_property
+    def aeps_by_slug(self) -> typing.Dict[str, AEP]:
+        """Return all the AEPs in the site, by slug"""
+        answer = collections.OrderedDict()
+        for scope in self.scopes.values():
+            for aep in scope.aeps.values():
+                answer[aep.slug] = aep
+        return answer
+
     @property
     def base_url(self) -> str:
         """Return the site's base URL."""
