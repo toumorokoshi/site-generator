@@ -67,17 +67,21 @@ class Scope:
                 continue
 
             # Create the AEP object.
-            answer.append(
-                AEP(
-                    id=meta.pop("id"),
-                    config=meta,
-                    changelog={Change(**i) for i in meta.pop("changelog", [])},
-                    created=meta.pop("created"),
-                    path=path,
-                    scope=self,
-                    state=meta.pop("state"),
+            try:
+                answer.append(
+                    AEP(
+                        id=meta.pop("id"),
+                        config=meta,
+                        changelog={Change(**i) for i in meta.pop("changelog", [])},
+                        created=meta.pop("created"),
+                        slug=meta.pop("slug"),
+                        path=path,
+                        scope=self,
+                        state=meta.pop("state"),
+                    )
                 )
-            )
+            except KeyError as e:
+                raise ValueError(f"Invalid AEP metadata at {path}: {e}")
 
         answer = sorted(answer, key=lambda i: i.id)
         return collections.OrderedDict([(i.id, i) for i in answer])

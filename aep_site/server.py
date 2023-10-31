@@ -55,6 +55,8 @@ def page(page: str, collection: str = "general"):
     site = flask.g.site
     if page in site.scopes:
         return site.scopes[page].render()
+    if page in site.aeps_by_slug:
+        return site.aeps_by_slug[page].render()
     if collection in site.collections and page in site.collections[collection].pages:
         return site.collections[collection].pages[page].render()
     if collection in site.scopes and int(page) in site.scopes[collection].aeps:

@@ -18,8 +18,8 @@
 # -----------------------------------------------------------------------------
 
 # Build the image (if and only if it is not already built).
-if [[ "$(docker images -q aep-site 2> /dev/null)" == "" ]]; then
-  if ! docker build -t aep-site . ; then
+if [[ "$(docker images -q aep-site-generator 2> /dev/null)" == "" ]]; then
+  if ! docker build -t aep-site-generator . ; then
     exit $?
   fi
 fi
@@ -29,5 +29,5 @@ docker run --rm \
   -p 4000:4000/tcp -p 4000:4000/udp \
   -p 35729:35729/tcp -p 35729:35729/udp \
   --mount type=bind,source="$(pwd)",destination=/code/,readonly \
-  aep-site
+  aep-site-generator
   "$@"
