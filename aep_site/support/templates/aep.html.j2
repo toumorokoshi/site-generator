@@ -22,6 +22,7 @@ AEP-{{ aep.id }}: {{ aep.title }}
   {# Wikipedia-style info table. -#}
   <table id="aep-summary">
     <tr><th colspan="2">{{ aep.title }}</th></tr>
+    <tr><td>Slug</td><td>{{ aep.slug }}</td></tr>
     <tr><td>Number</td><td>{{ aep.id }}</td></tr>
     {% with permalink = site.base_url + aep.relative_uri -%}
     <tr><td>Permalink</td><td><a href="{{ permalink }}">{{ permalink.lstrip('htps')[3:] }}</a></td></tr>
@@ -55,7 +56,7 @@ AEP-{{ aep.id }}: {{ aep.title }}
     {% include 'includes/breadcrumb.html.j2' %}
   {% endwith -%}
   {% include 'includes/state_banners/' + aep.state + '.html.j2' ignore missing %}
-  <h4 class="aep-number">AEP-{{ aep.id }}</h4>
+  <h4 class="aep-number">{{ aep.slug }} (AEP-{{ aep.id }})</h4>
   {{ aep.content.html }}
   {% include 'includes/footer.html.j2' %}
 </section>
