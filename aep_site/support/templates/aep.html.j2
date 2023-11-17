@@ -56,7 +56,7 @@ AEP-{{ aep.id }}: {{ aep.title }}
     {% include 'includes/breadcrumb.html.j2' %}
   {% endwith -%}
   {% include 'includes/state_banners/' + aep.state + '.html.j2' ignore missing %}
-  <h4 class="aep-number">{{ aep.slug }} (AEP-{{ aep.id }})</h4>
+  <h4 class="aep-id">{{ aep.slug }} (AEP-{{ aep.id }})</h4>
   {{ aep.content.html }}
   {% include 'includes/footer.html.j2' %}
 </section>

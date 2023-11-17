@@ -18,7 +18,7 @@
       {% for aep in cat.aeps.values() -%}
         <li class="nav-item{% if path.split('/')[-1] == '{:d}'.format(aep.id) %} nav-item-active{% endif %}">
           <a href="{{ site.relative_uri }}/{{ aep.id }}">
-            <span class="aep-number">{{ aep.id }}</span>
+            <span class="aep-id">{{ aep.id }}</span>
             {{ aep.title }}
           </a>
         </li>
