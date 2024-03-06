@@ -23,8 +23,8 @@ shortcuts:
       text: Contribute to the project
   - title: Want to use AEPs for your organization?
     description: |
-      AEPs are designed to be useful outside of Google. Take a look at how you
-      might choose which AEPs are best suited to your API design needs.
+      AEPs are designed to be useful for any organization. Take a look at how
+      you might choose which AEPs are best suited to your API design needs.
     button:
       href: /adopting
       text: Learn more
